@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>آزمایشگاه فیثاغورس | از کشف تا حل مستقل</title>
+<style>
+:root{--navy:#12324a;--blue:#1f6f8b;--teal:#148a83;--gold:#e4aa3b;--paper:#f4f7f9;--line:#d9e3e9;--good:#157347;--bad:#b42318}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:#17222c;font-family:Tahoma,"Vazirmatn",sans-serif;line-height:1.85}
+.header{background:linear-gradient(135deg,#102f46,#1e6682);color:#fff;padding:22px 18px 26px}
+.wrap{max-width:1100px;margin:auto;padding:0 16px}
+h1{font-size:clamp(1.5rem,4vw,2.2rem);margin:4px 0}
+.header p{margin:6px 0;color:#d8e8f0}
+.topbar{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.topinner{max-width:1100px;margin:auto;padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.progressLine{height:8px;background:#e6edf1;border-radius:20px;overflow:hidden;flex:1;min-width:200px}
+.progressLine>div{height:100%;width:0;background:linear-gradient(90deg,var(--teal),var(--blue));transition:width .35s}
+.progressText{display:flex;justify-content:space-between;font-size:.82rem;color:#61707c;margin-top:5px;width:100%}
+.teacherBtn{background:#f6e6bd;color:#604507;border:0;border-radius:10px;padding:8px 14px;font-weight:bold;cursor:pointer;font:inherit}
+main{padding:22px 0 48px}
+.page{display:none}
+.page.active{display:block}
+.panel{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(16px,3vw,26px);margin-bottom:16px;box-shadow:0 12px 35px rgba(18,50,74,.09)}
+h2{color:var(--navy);font-size:1.35rem;margin:8px 0}
+h3{color:var(--navy);font-size:1.05rem;margin:12px 0 6px}
+.kicker{display:inline-block;background:#e7f4f2;color:#11665f;border-radius:999px;padding:3px 10px;font-size:.82rem;font-weight:bold}
+.visual{background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;margin:14px 0;overflow-x:auto}
+svg{display:block;width:100%;height:auto;max-width:100%}
+.question{background:#f8fafc;border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+table{width:100%;border-collapse:collapse;margin:12px 0}
+th,td{border:1px solid var(--line);padding:7px;text-align:center}
+th{background:#eef6fa;color:var(--navy)}
+input.cell{max-width:70px;margin:auto;display:block;border:1px solid #b9c9d4;border-radius:8px;padding:6px;text-align:center;font:inherit}
+label{display:block;font-weight:bold;margin:9px 0 4px}
+input,select,textarea{border:1px solid #b9c9d4;border-radius:10px;padding:9px 11px;background:#fff;width:100%;font:inherit}
+.btn{border:0;border-radius:11px;padding:10px 18px;font-weight:800;cursor:pointer;margin-top:10px;font:inherit}
+.primary{background:var(--navy);color:#fff}
+.secondary{background:#e8f0f4;color:var(--navy)}
+.feedback{display:none;border-radius:11px;padding:10px 13px;margin-top:11px}
+.feedback.show{display:block}
+.good{background:#e8f7ef;color:#115e3b;border:1px solid #b8e2cc}
+.bad{background:#fff0ef;color:#912018;border:1px solid #f0c2be}
+.info{background:#eef6fa;color:#214e64;border:1px solid #c9e1ee}
+.hint{display:none;background:#fff8e5;border:1px solid #efd58b;border-radius:11px;padding:11px 13px;margin-top:10px}
+.hint.show{display:block}
+.small{font-size:.88rem;color:#61707c}
+.callout{background:#edf6fa;border-right:4px solid var(--blue);padding:11px 14px;border-radius:10px;margin:12px 0}
+.math{direction:ltr;text-align:center;font-family:Arial,sans-serif;font-weight:800;color:var(--navy);font-size:1.2rem;margin:10px 0}
+.steps{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}
+.steps ol{margin:0;padding-right:22px}
+.steps li{margin:6px 0}
+.steps .reason{color:#61707c;font-size:.9rem;display:block}
+.teacherNote{display:none;background:#fff8e5;border:1px dashed #d4a93d;border-radius:12px;padding:14px;margin:14px 0;font-size:.92rem}
+.teacherNote.show{display:block}
+.teacherNote strong{color:#694c0b}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;justify-content:space-between}
+footer{text-align:center;color:#61707c;padding:0 16px 25px;font-size:.85rem}
+@media(max-width:760px){.progressText{font-size:.75rem}.topinner{flex-direction:column;align-items:stretch}}
+</style>
+</head>
+<body>
+<header class="header">
+<div class="wrap">
+<h1>آزمایشگاه فیثاغورس</h1>
+<p>از کشف الگو تا حل مستقل: پنج مرحله برای یادگیری قضیه فیثاغورس.</p>
+</div>
+</header>
+
+<div class="topbar">
+<div class="topinner">
+<div class="progressLine"><div id="progress"></div></div>
+<button class="teacherBtn" onclick="toggleTeacher()" title="نمایش یادداشت‌های معلم">👨‍🏫 نمای معلم</button>
+</div>
+<div class="topinner" style="padding-top:0">
+<div class="progressText"><span id="progressLabel">مرحله ۱ از ۵ · کشف الگو</span><span id="scoreLabel">امتیاز: ۰</span></div>
+</div>
+</div>
+
+<main class="wrap">
+
+<!-- ============ مرحله ۱: کشف الگو ============ -->
+<div class="page active" id="page1">
+<div class="panel">
+<span class="kicker">مرحله ۱ · کشف الگو</span>
+<h2>مساحت مربع‌ها چه الگویی دارند؟</h2>
+
+<div class="teacherNote">
+<strong>یادداشت معلم — مرحله ۱:</strong>
+<p><strong>هدف:</strong> یادگیرنده پیش از دریافت صورت‌بندی رسمی، در مشاهده و مقایسه روابط عددی مشارکت کند.</p>
+<p><strong>نکته:</strong> مشاهده چند نمونه، زمینه‌ای برای حدس‌زدن فراهم می‌کند، اما به‌تنهایی اثبات قضیه نیست. باید این تمایز را برای دانش‌آموز روشن کنید.</p>
+<p><strong>زمان پیشنهادی:</strong> ۵ تا ۷ دقیقه.</p>
+</div>
+
+<p>در هر شکل زیر، روی هر ضلع مثلث قائم‌الزاویه یک مربع ساخته شده است. مربع‌های شطرنجی داخل هر مربع را بشمار و مساحت آن را در جدول بنویس.</p>
+
+<div class="visual">
+<h3>مثلث ۱: ضلع‌های ۳ و ۴، وتر ۵</h3>
+<svg viewBox="0 0 550 580" role="img" aria-label="مثلث قائم‌الزاویه ۳-۴-۵">
+<defs><pattern id="g1" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M50 0 L0 0 0 50" fill="none" stroke="#d0dae2" stroke-width="0.8"/></pattern></defs>
+<rect width="550" height="580" fill="url(#g1)"/>
+<polygon points="150,350 150,200 50,200 50,350" fill="#148a8340" stroke="#148a83" stroke-width="2"/>
+<polygon points="150,350 350,350 350,550 150,550" fill="#e4aa3b55" stroke="#a87812" stroke-width="2"/>
+<polygon points="150,350 350,350 150,200" fill="#dcecf4" stroke="#1f6f8b" stroke-width="3"/>
+<polygon points="150,330 170,330 170,350" fill="none" stroke="#12324a" stroke-width="2"/>
+<polygon points="150,200 350,350 500,150 300,0" fill="#1f6f8b40" stroke="#1f6f8b" stroke-width="2"/>
+<text x="250" y="375" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۴</text>
+<text x="135" y="280" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۳</text>
+<text x="265" y="265" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۵</text>
+</svg>
+</div>
+
+<div class="visual">
+<h3>مثلث ۲: ضلع‌های ۵ و ۱۲، وتر ۱۳</h3>
+<svg viewBox="0 0 650 780" role="img" aria-label="مثلث قائم‌الزاویه ۵-۱۲-۱۳">
+<defs><pattern id="g2" width="25" height="25" patternUnits="userSpaceOnUse"><path d="M25 0 L0 0 0 25" fill="none" stroke="#d0dae2" stroke-width="0.6"/></pattern></defs>
+<rect width="650" height="780" fill="url(#g2)"/>
+<polygon points="160,440 160,315 35,315 35,440" fill="#148a8340" stroke="#148a83" stroke-width="2"/>
+<polygon points="160,440 460,440 460,740 160,740" fill="#e4aa3b55" stroke="#a87812" stroke-width="2"/>
+<polygon points="160,440 460,440 160,315" fill="#dcecf4" stroke="#1f6f8b" stroke-width="3"/>
+<polygon points="160,420 180,420 180,440" fill="none" stroke="#12324a" stroke-width="2"/>
+<polygon points="160,315 460,440 585,140 285,15" fill="#1f6f8b40" stroke="#1f6f8b" stroke-width="2"/>
+<text x="310" y="470" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۱۲</text>
+<text x="140" y="385" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۵</text>
+<text x="290" y="395" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۱۳</text>
+</svg>
+</div>
+
+<div class="visual">
+<h3>مثلث ۳: ضلع‌های ۶ و ۸، وتر ۱۰</h3>
+<svg viewBox="0 0 700 700" role="img" aria-label="مثلث قائم‌الزاویه ۶-۸-۱۰">
+<defs><pattern id="g3" width="30" height="30" patternUnits="userSpaceOnUse"><path d="M30 0 L0 0 0 30" fill="none" stroke="#d0dae2" stroke-width="0.6"/></pattern></defs>
+<rect width="700" height="700" fill="url(#g3)"/>
+<polygon points="230,420 230,240 50,240 50,420" fill="#148a8340" stroke="#148a83" stroke-width="2"/>
+<polygon points="230,420 470,420 470,660 230,660" fill="#e4aa3b55" stroke="#a87812" stroke-width="2"/>
+<polygon points="230,420 470,420 230,240" fill="#dcecf4" stroke="#1f6f8b" stroke-width="3"/>
+<polygon points="230,400 250,400 250,420" fill="none" stroke="#12324a" stroke-width="2"/>
+<polygon points="230,240 470,420 650,180 410,0" fill="#1f6f8b40" stroke="#1f6f8b" stroke-width="2"/>
+<text x="350" y="450" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۸</text>
+<text x="215" y="340" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۶</text>
+<text x="355" y="360" font-size="20" fill="#12324a" text-anchor="middle" font-weight="bold">۱۰</text>
+</svg>
+</div>
+
+<div class="question">
+<h3>جدول مساحت‌ها</h3>
+<p class="small">مربع‌های شطرنجی داخل هر مربع را بشمار و مساحت آن را در جدول بنویس.</p>
+<table>
+<thead><tr><th>مثلث</th><th>ضلع کوچک‌تر</th><th>مساحت</th><th>ضلع بزرگ‌تر</th><th>مساحت</th><th>وتر</th><th>مساحت</th></tr></thead>
+<tbody>
+<tr><td>۱</td><td>۳</td><td><input id="s1" inputmode="numeric" class="cell" placeholder="؟"></td><td>۴</td><td><input id="s2" inputmode="numeric" class="cell" placeholder="؟"></td><td>۵</td><td><input id="s3" inputmode="numeric" class="cell" placeholder="؟"></td></tr>
+<tr><td>۲</td><td>۵</td><td><input id="s4" inputmode="numeric" class="cell" placeholder="؟"></td><td>۱۲</td><td><input id="s5" inputmode="numeric" class="cell" placeholder="؟"></td><td>۱۳</td><td><input id="s6" inputmode="numeric" class="cell" placeholder="؟"></td></tr>
+<tr><td>۳</td><td>۶</td><td><input id="s7" inputmode="numeric" class="cell" placeholder="؟"></td><td>۸</td><td><input id="s8" inputmode="numeric" class="cell" placeholder="؟"></td><td>۱۰</td><td><input id="s9" inputmode="numeric" class="cell" placeholder="؟"></td></tr>
+</tbody>
+</table>
+<label for="pattern">حدس تو: چه رابطه‌ای بین مساحت‌ها وجود دارد؟</label>
+<select id="pattern">
+<option value="">انتخاب کن</option>
+<option value="sum">مجموع دو مساحت کوچک‌تر = مساحت وتر</option>
+<option value="diff">مساحت وتر = مساحت بزرگ‌تر − مساحت کوچک‌تر</option>
+<option value="same">هر سه مساحت همیشه برابرند</option>
+</select>
+<button class="btn primary" onclick="checkDiscovery()">بررسی کشف من</button>
+<button class="btn secondary" onclick="toggle('hint1')">راهنمایی</button>
+<div id="hint1" class="hint">در مثلث اول: ۹ + ۱۶ با ۲۵ چه رابطه‌ای دارد؟ همین را برای مثلث دوم و سوم بررسی کن.</div>
+<div id="fb1" class="feedback"></div>
+</div>
+</div>
+</div>
+
+<!-- ============ مرحله ۲: جمع‌بندی قضیه ============ -->
+<div class="page" id="page2">
+<div class="panel">
+<span class="kicker">مرحله ۲ · جمع‌بندی قضیه</span>
+<h2>قضیهٔ فیثاغورس</h2>
+
+<div class="teacherNote">
+<strong>یادداشت معلم — مرحله ۲:</strong>
+<p><strong>هدف:</strong> صورت‌بندی ریاضی رابطه و تشخیص وتر. نمایش هم‌زمان شکل، توضیح و نمادگذاری، نیاز به جست‌وجو در منابع پراکنده را کاهش می‌دهد.</p>
+<p><strong>پرسش‌های پیشنهادی:</strong> «از کجا می‌فهمی وتر است؟»، «اگر زاویه بین دو ضلع ۹۰ درجه نباشد چه اتفاقی می‌افتد؟»</p>
+<p><strong>زمان پیشنهادی:</strong> ۳ تا ۵ دقیقه.</p>
+</div>
+
+<div class="callout">
+<p>در هر سه مثلث، رابطه زیر برقرار بود:</p>
+<div class="math">a² = b² + c²</div>
+<p>یعنی در هر مثلث قائم‌الزاویه، <strong>مجذور وتر با مجموع مجذورهای دو ضلع دیگر برابر است</strong>.</p>
+</div>
+<div class="callout">
+<p><strong>عکس رابطه هم درست است:</strong> اگر در مثلثی مجذور یک ضلع با مجموع مجذورهای دو ضلع دیگر برابر باشد، آن مثلث قائم‌الزاویه است.</p>
+</div>
+
+<div class="question">
+<h3>خودت را بسنج</h3>
+<label>۱) وتر کدام ضلع است؟</label>
+<select id="hypAnswer">
+<option value="">انتخاب کن</option>
+<option value="a">ضلع روبه‌روی زاویهٔ قائمه</option>
+<option value="b">ضلع بزرگ‌تر همیشه</option>
+<option value="c">ضلع کوچک‌تر</option>
+</select>
+<label for="angleAnswer">۲) اگر a²=b²+c² باشد، زاویهٔ بین b و c چند درجه است؟</label>
+<input id="angleAnswer" inputmode="numeric" placeholder="عدد را وارد کن">
+<button class="btn primary" onclick="checkConcept()">بررسی</button>
+<button class="btn secondary" onclick="toggle('hint2')">راهنمایی</button>
+<div id="hint2" class="hint">به علامت زاویه قائمه در شکل‌های مرحله قبل نگاه کن. وتر همیشه روبه‌روی این زاویه قرار دارد.</div>
+<div id="fb2" class="feedback"></div>
+</div>
+</div>
+</div>
+
+<!-- ============ مرحله ۳: مثال حل‌شده ============ -->
+<div class="page" id="page3">
+<div class="panel">
+<span class="kicker">مرحله ۳ · مثال حل‌شده</span>
+<h2>مثال کامل: نردبان و دیوار</h2>
+
+<div class="teacherNote">
+<strong>یادداشت معلم — مرحله ۳:</strong>
+<p><strong>هدف:</strong> ارائه راه‌حل کامل همراه با دلیل هر گام. تأکید بر این است که چرا نردبان وتر است و چرا برای یافتن h² از تفریق استفاده می‌شود.</p>
+<p><strong>نکته:</strong> از دانش‌آموزان بخواهید پس از مشاهده هر گام، دلیل آن را به زبان خودشان توضیح دهند.</p>
+<p><strong>زمان پیشنهادی:</strong> ۷ تا ۱۰ دقیقه.</p>
+</div>
+
+<p>در این مثال، تمام مراحل حل با دلیل هر گام توضیح داده شده است. ابتدا مثال را دنبال کن، سپس در مرحله بعد یک مثال مشابه را با راهنمایی کمتر حل کن.</p>
+
+<div class="visual">
+<svg viewBox="0 0 500 340" role="img" aria-label="نردبان با طول ۱۳ متر، فاصله ۵ متر و ارتفاع مجهول">
+<line x1="55" y1="280" x2="420" y2="280" stroke="#667784" stroke-width="5"/>
+<line x1="360" y1="55" x2="360" y2="280" stroke="#667784" stroke-width="5"/>
+<polygon points="80,280 360,280 360,120" fill="#dcecf4" stroke="#1f6f8b" stroke-width="3"/>
+<polygon points="360,260 340,260 340,280" fill="none" stroke="#12324a" stroke-width="3"/>
+<line x1="80" y1="280" x2="360" y2="120" stroke="#a97814" stroke-width="8" stroke-linecap="round"/>
+<text x="220" y="310" text-anchor="middle" font-size="18" font-weight="bold">۵ متر</text>
+<text x="240" y="180" font-size="18" font-weight="bold" transform="rotate(-32 240 180)">۱۳ متر</text>
+<text x="380" y="205" font-size="18" font-weight="bold">h = ؟</text>
+</svg>
+</div>
+
+<div class="steps">
+<h3>راه‌حل گام‌به‌گام</h3>
+<ol>
+<li><strong>گام ۱:</strong> تشخیص اینکه مثلث قائم‌الزاویه است. <span class="reason">دلیل: دیوار بر زمین عمود است.</span></li>
+<li><strong>گام ۲:</strong> شناسایی وتر و دو ضلع قائم. <span class="reason">دلیل: نردبان روبه‌روی زاویه قائمه است.</span></li>
+<li><strong>گام ۳:</strong> نوشتن رابطه فیثاغورس. <div class="math">13² = 5² + h²</div></li>
+<li><strong>گام ۴:</strong> محاسبه مربع‌ها. <div class="math">169 = 25 + h²</div></li>
+<li><strong>گام ۵:</strong> جدا کردن مجهول. <div class="math">h² = 169 − 25 = 144</div></li>
+<li><strong>گام ۶:</strong> پیدا کردن طول ضلع. <div class="math">h = √144 = 12</div></li>
+</ol>
+</div>
+
+<div class="callout">
+<strong>نکته:</strong> در هر مثال، ترتیب گام‌ها یکسان است: تشخیص مثلث قائم → شناسایی وتر → نوشتن رابطه → محاسبه → جدا کردن مجهول → پیدا کردن طول ضلع.
+</div>
+
+<div class="question">
+<h3>توضیح خودت</h3>
+<label for="whyStep3">چرا در گام ۳، ۱۳ را به‌عنوان وتر و ۵ و h را به‌عنوان ضلع‌های قائم در نظر گرفتیم؟</label>
+<textarea id="whyStep3" rows="2" placeholder="پاسخ خود را در یک یا دو جمله بنویس"></textarea>
+<button class="btn primary" onclick="checkStage3()">ثبت توضیح</button>
+<button class="btn secondary" onclick="toggle('hint3')">راهنمایی</button>
+<div id="hint3" class="hint">به جایگاه نردبان در شکل نگاه کن. آیا نردبان روبه‌روی زاویه قائمه قرار دارد؟ اگر بله، وتر است.</div>
+<div id="fb3" class="feedback"></div>
+</div>
+</div>
+</div>
+
+<!-- ============ مرحله ۴: مثال نیمه‌حل‌شده ============ -->
+<div class="page" id="page4">
+<div class="panel">
+<span class="kicker">مرحله ۴ · مثال نیمه‌حل‌شده</span>
+<h2>حالا با راهنمایی کمتر حل کن</h2>
+
+<div class="teacherNote">
+<strong>یادداشت معلم — مرحله ۴:</strong>
+<p><strong>هدف:</strong> کاهش تدریجی حمایت. دو گام نخست داده شده و دانش‌آموز باید دو گام آخر را کامل کند.</p>
+<p><strong>نکته:</strong> اگر دانش‌آموز هنوز در تشخیص وتر مشکل دارد، پیش از ادامه، همان بخش را روشن کنید.</p>
+<p><strong>زمان پیشنهادی:</strong> ۵ تا ۷ دقیقه.</p>
+</div>
+
+<p>در مثلث زیر، وتر ۱۰ واحد و یکی از ضلع‌های قائم ۶ واحد است. طول ضلع قائم دیگر را پیدا کن. دو گام آخر را خودت کامل کن.</p>
+
+<div class="visual">
+<svg viewBox="0 0 500 340" role="img" aria-label="مثلث قائم‌الزاویه با وتر ۱۰ و ضلع قائم ۶ و ضلع مجهول">
+<polygon points="100,280 400,280 100,100" fill="#dcecf4" stroke="#1f6f8b" stroke-width="3"/>
+<polygon points="100,260 120,260 120,280" fill="none" stroke="#12324a" stroke-width="2"/>
+<text x="250" y="310" text-anchor="middle" font-size="18" font-weight="bold">۶</text>
+<text x="80" y="195" font-size="18" font-weight="bold" text-anchor="middle">؟</text>
+<text x="270" y="185" font-size="18" font-weight="bold" text-anchor="middle">۱۰</text>
+</svg>
+</div>
+
+<div class="steps">
+<h3>راه‌حل نیمه‌کاره</h3>
+<ol>
+<li><strong>گام ۱:</strong> نوشتن رابطه. <div class="math">10² = 6² + x²</div></li>
+<li><strong>گام ۲:</strong> محاسبه مربع‌ها. <div class="math">100 = 36 + x²</div></li>
+<li><strong>گام ۳:</strong> <em>جدا کردن مجهول</em> — <span style="color:#b42318">این گام را خودت کامل کن.</span></li>
+<li><strong>گام ۴:</strong> <em>پیدا کردن طول ضلع</em> — <span style="color:#b42318">این گام را خودت کامل کن.</span></li>
+</ol>
+</div>
+
+<div class="question">
+<label for="xSq">گام ۳: x² = ؟</label>
+<input id="xSq" inputmode="numeric" placeholder="مقدار x²">
+<label for="xVal">گام ۴: x = ؟</label>
+<input id="xVal" inputmode="numeric" placeholder="مقدار x">
+<button class="btn primary" onclick="checkStage4()">بررسی پاسخ</button>
+<button class="btn secondary" onclick="toggle('hint4')">راهنمایی</button>
+<div id="hint4" class="hint">برای گام ۳: ۳۶ را از ۱۰۰ کم کن. برای گام ۴: عددی را پیدا کن که در خودش ضرب شود و مقدار گام ۳ را بدهد.</div>
+<div id="fb4" class="feedback"></div>
+</div>
+</div>
+</div>
+
+<!-- ============ مرحله ۵: چالش مستقل ============ -->
+<div class="page" id="page5">
+<div class="panel">
+<span class="kicker">مرحله ۵ · چالش مستقل</span>
+<h2>مسئلهٔ واقعی: مسیر شیب‌دار</h2>
+
+<div class="teacherNote">
+<strong>یادداشت معلم — مرحله ۵:</strong>
+<p><strong>هدف:</strong> انتقال یادگیری به بافت متفاوت. هیچ راهنمایی مرحله‌به‌مرحله ارائه نمی‌شود.</p>
+<p><strong>پرسش‌های پیشنهادی پس از اتمام:</strong> «اگر ارتفاع ۴ متر بود چه تغییری می‌کرد؟»، «تفاوت مشاهده الگو با اثبات قضیه چیست؟»</p>
+<p><strong>زمان پیشنهادی:</strong> ۵ تا ۸ دقیقه.</p>
+</div>
+
+<p>در این مرحله هیچ راهنمایی و مثال حل‌شده‌ای در دسترس نیست. خودت مسئله را تحلیل کن و پاسخ بده.</p>
+
+<div class="visual">
+<svg viewBox="0 0 500 340" role="img" aria-label="مسیر شیب‌دار با ارتفاع ۳ متر و فاصله افقی ۱٫۵ متر">
+<line x1="55" y1="280" x2="430" y2="280" stroke="#667784" stroke-width="5"/>
+<line x1="360" y1="70" x2="360" y2="280" stroke="#667784" stroke-width="5"/>
+<polygon points="80,280 360,280 360,90" fill="#dcecf4" stroke="#1f6f8b" stroke-width="3"/>
+<polygon points="360,260 340,260 340,280" fill="none" stroke="#12324a" stroke-width="3"/>
+<line x1="80" y1="280" x2="360" y2="90" stroke="#a97814" stroke-width="8" stroke-linecap="round"/>
+<text x="220" y="310" text-anchor="middle" font-size="18" font-weight="bold">۱٫۵ متر</text>
+<text x="385" y="190" font-size="18" font-weight="bold">۳ متر</text>
+<text x="215" y="170" font-size="18" font-weight="bold" transform="rotate(-33 215 170)">L = ؟</text>
+</svg>
+</div>
+
+<div class="question">
+<label for="c1">۱) رابطه ریاضی را بنویس (مثلاً L² = ...):</label>
+<input id="c1" placeholder="رابطه را اینجا بنویس">
+<label for="c2">۲) مقدار L را تا دو رقم اعشار بنویس:</label>
+<input id="c2" inputmode="decimal" placeholder="عدد">
+<label for="c3">۳) چرا می‌توان از قضیه فیثاغورس استفاده کرد؟</label>
+<textarea id="c3" rows="3" placeholder="دلیل هندسی خود را بنویس"></textarea>
+<button class="btn primary" onclick="checkStage5()">بررسی چالش</button>
+<button class="btn secondary" onclick="toggle('hint5')">دریافت یک راهنمایی کلی</button>
+<div id="hint5" class="hint">مسیر شیب‌دار وتر است. به ساختار مثلث قائم‌الزاویه نگاه کن.</div>
+<div id="fb5" class="feedback"></div>
+<div id="finalCard" class="callout" style="display:none">
+<h3>🎉 فعالیت کامل شد</h3>
+<p id="finalText"></p>
+<button class="btn secondary" onclick="restart()">شروع دوباره</button>
+</div>
+</div>
+</div>
+</div>
+
+<!-- دکمه‌های ناوبری -->
+<div class="controls" id="navControls">
+<button class="btn secondary" id="prevBtn" onclick="prevPage()" style="display:none">← صفحه قبل</button>
+<button class="btn primary" id="nextBtn" onclick="nextPage()" disabled>صفحه بعد ←</button>
+</div>
+
+</main>
+<footer>آزمایشگاه فیثاغورس · از کشف تا حل مستقل · پایهٔ هشتم</footer>
+
+<script>
+const $ = id => document.getElementById(id);
+let currentPage = 1;
+let teacherOn = false;
+let state = { discoveryDone: false, conceptDone: false, stage3Done: false, stage4Done: false, stage5Done: false, score: 0 };
+
+function norm(id) {
+  return ($(id)?.value || "").trim()
+    .replace(/[۰-۹]/g, d => "۰۱۲۳۴۵۶۷۸۹".indexOf(d))
+    .replace(/[٠-٩]/g, d => "٠١٢٣٤٥٦٧٨٩".indexOf(d))
+    .replace(/٫/g, '.').replace(/,/g, '');
+}
+function fb(id, msg, type) { const e = $(id); e.className = "feedback show " + type; e.textContent = msg; }
+function toggle(id) { $(id).classList.toggle("show"); }
+
+function toggleTeacher() {
+  teacherOn = !teacherOn;
+  document.querySelectorAll(".teacherNote").forEach(n => n.classList.toggle("show", teacherOn));
+  document.querySelector(".teacherBtn").textContent = teacherOn ? "👨‍🏫 بستن نمای معلم" : "👨‍🏫 نمای معلم";
+}
+
+function updateProgress() {
+  $("progress").style.width = (currentPage / 5 * 100) + "%";
+  const labels = {
+    1: "مرحله ۱ از ۵ · کشف الگو",
+    2: "مرحله ۲ از ۵ · جمع‌بندی قضیه",
+    3: "مرحله ۳ از ۵ · مثال حل‌شده",
+    4: "مرحله ۴ از ۵ · مثال نیمه‌حل‌شده",
+    5: "مرحله ۵ از ۵ · چالش مستقل"
+  };
+  $("progressLabel").textContent = labels[currentPage];
+  $("scoreLabel").textContent = "امتیاز: " + state.score;
+}
+
+function goToPage(n) {
+  document.querySelectorAll(".page").forEach((p, i) => { p.classList.toggle("active", i === n - 1); });
+  currentPage = n;
+  $("prevBtn").style.display = n > 1 ? "inline-block" : "none";
+  $("nextBtn").style.display = n < 5 ? "inline-block" : "none";
+  updateProgress();
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+function nextPage() { if (currentPage < 5) goToPage(currentPage + 1); }
+function prevPage() { if (currentPage > 1) goToPage(currentPage - 1); }
+function enableNext() { $("nextBtn").disabled = false; }
+
+function checkDiscovery() {
+  const ids = ["s1","s2","s3","s4","s5","s6","s7","s8","s9"];
+  const ans = ["9","16","25","25","144","169","36","64","100"];
+  const ok = ids.every((id, i) => norm(id) === ans[i]) && $("pattern").value === "sum";
+  if (ok) {
+    fb("fb1", "آفرین! در هر سه مثلث، مجموع مساحت دو مربع کوچک‌تر با مساحت مربع وتر برابر است.", "good");
+    if (!state.discoveryDone) { state.discoveryDone = true; state.score++; }
+    enableNext();
+  } else {
+    fb("fb1", "دوباره بشمار. مساحت هر مربع را با دقت حساب کن.", "bad");
+  }
+}
+
+function checkConcept() {
+  const ok = $("hypAnswer").value === "a" && norm("angleAnswer") === "90";
+  if (ok) {
+    fb("fb2", "درست است. وتر روبه‌روی زاویهٔ قائمه است و زاویهٔ بین دو ضلع قائم ۹۰ درجه است.", "good");
+    if (!state.conceptDone) { state.conceptDone = true; state.score++; }
+    enableNext();
+  } else {
+    fb("fb2", "دوباره بررسی کن: وتر روبه‌روی زاویهٔ قائمه قرار دارد.", "bad");
+  }
+}
+
+function checkStage3() {
+  const why = norm("whyStep3").toLowerCase();
+  const keywords = ["وتر", "قائم", "نردبان", "روبه", "90", "زاویه"];
+  const hasKeyword = keywords.some(k => why.includes(k));
+  if (why.length > 10 && hasKeyword) {
+    fb("fb3", "درست است. توضیح شما ثبت شد. حالا برو به مرحله بعد.", "good");
+    if (!state.stage3Done) { state.stage3Done = true; state.score++; }
+    enableNext();
+  } else if (why.length > 10) {
+    fb("fb3", "توضیح شما ثبت شد. برای کامل‌تر شدن، به این نکته اشاره کن که چرا نردبان روبه‌روی زاویه قائمه قرار دارد (وتر بودن).", "info");
+    if (!state.stage3Done) { state.stage3Done = true; state.score++; }
+    enableNext();
+  } else {
+    fb("fb3", "لطفاً توضیح خود را کامل‌تر بنویس (حداقل یک جمله درباره جایگاه نردبان نسبت به زاویه قائمه).", "bad");
+  }
+}
+
+function checkStage4() {
+  const ok = norm("xSq") === "64" && norm("xVal") === "8";
+  if (ok) {
+    fb("fb4", "درست! x² = ۱۰۰ − ۳۶ = ۶۴ و x = ۸ (چون ۸×۸=۶۴).", "good");
+    if (!state.stage4Done) { state.stage4Done = true; state.score++; }
+    enableNext();
+  } else {
+    fb("fb4", "دوباره بررسی کن: ۱۰۰ − ۳۶ = ۶۴. حالا عددی را پیدا کن که در خودش ضرب شود و ۶۴ بدهد.", "bad");
+  }
+}
+
+function checkStage5() {
+  const c1 = norm("c1").toLowerCase();
+  const c2 = parseFloat(norm("c2"));
+  const c3 = norm("c3").toLowerCase();
+  const relationOK = c1.includes("1.5") || c1.includes("1٫5") || c1.includes("3") || c1.includes("l");
+  const numberOK = Math.abs(c2 - 3.35) < 0.05;
+  const whyKeywords = ["قائم", "وتر", "مثلث", "زاویه"];
+  const whyOK = c3.length > 10 && whyKeywords.some(k => c3.includes(k));
+
+  if (relationOK && numberOK && whyOK) {
+    fb("fb5", "چالش حل شد! L ≈ ۳٫۳۵ متر. رابطه و دلیل شما ثبت شد.", "good");
+    if (!state.stage5Done) { state.stage5Done = true; state.score++; }
+    $("finalCard").style.display = "block";
+    $("finalText").textContent = "امتیاز نهایی: " + state.score + " از ۵. مسیر یادگیری را کامل کردی.";
+  } else {
+    let msg = "پاسخ شما کامل نیست: ";
+    if (!relationOK) msg += "رابطه ریاضی را کامل بنویس. ";
+    if (!numberOK) msg += "مقدار L باید حدود ۳٫۳۵ باشد. ";
+    if (!whyOK) msg += "دلیل هندسی را با ذکر مثلث قائم‌الزاویه و وتر بنویس.";
+    fb("fb5", msg, "bad");
+  }
+}
+
+function restart() {
+  document.querySelectorAll("input, textarea").forEach(e => e.value = "");
+  document.querySelectorAll("select").forEach(e => e.selectedIndex = 0);
+  document.querySelectorAll(".feedback").forEach(e => { e.className = "feedback"; e.textContent = ""; });
+  document.querySelectorAll(".hint").forEach(e => e.classList.remove("show"));
+  $("finalCard").style.display = "none";
+  state = { discoveryDone: false, conceptDone: false, stage3Done: false, stage4Done: false, stage5Done: false, score: 0 };
+  $("nextBtn").disabled = true;
+  goToPage(1);
+}
+
+updateProgress();
+</script>
+</body>
+</html>
